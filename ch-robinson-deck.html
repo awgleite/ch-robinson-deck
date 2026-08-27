@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH Robinson · VP of Technology, August 2026</title>
+
+<!-- Fonts: Fraunces (display serif, stand-in for the brand's Tobias) + Hanken Grotesk (text sans, stand-in for Suisse Int'l) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   THEME — HappyRobot design-system tokens
+   =========================================== */
+:root {
+    --primary:   #000000;
+    --secondary: #F1F0E5;
+    --cover:     #EAE7E2;
+    --tertiary:  #DB8B4D;
+    --surface:   #FFFFFF;
+    --border:    #E1DDCE;
+    --text:      #14120F;
+    --muted:     #79726A;
+    --blue:      #3B81F5;
+    --green:     #51BE4D;
+    --dark:      #2C2C2F;
+    --dark-border: rgba(241,237,228,0.14);
+    --dark-muted: #A6A39C;
+
+    --font-display: 'Fraunces', serif;
+    --font-body:    'Hanken Grotesk', sans-serif;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.65s;
+
+    --stage-bg: var(--cover);
+    --slide-bg: var(--secondary);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   VIEWPORT-BASE.CSS — mandatory fixed 16:9 stage
+   =========================================== */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff); }
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg, #fff); }
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ===========================================
+   ENTRANCE ANIMATIONS — editorial, staggered, calm
+   =========================================== */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.15s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.25s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.35s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.45s; }
+.reveal-line { opacity: 0; transform: scaleX(0); transform-origin: left; transition: opacity 0.4s var(--ease-out-expo), transform 0.5s var(--ease-out-expo); }
+.slide.visible .reveal-line { opacity: 1; transform: scaleX(1); transition-delay: 0.4s; }
+
+/* ===========================================
+   SHARED CHROME
+   =========================================== */
+.wordmark { display: flex; align-items: center; gap: 12px; }
+.wordmark .mark { width: 24px; height: 19px; color: var(--primary); }
+.wordmark.on-dark .mark { color: #F1EDE4; }
+.wordmark span { font-family: var(--font-body); font-weight: 600; font-size: 19px; letter-spacing: -0.01em; color: var(--text); }
+.wordmark.on-dark span { color: #F1EDE4; }
+
+.kicker { font-family: var(--font-body); font-size: 12.5px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--tertiary); }
+
+.frame { position: relative; width: 100%; height: 100%; padding: 80px; }
+
+/* ===========================================
+   SLIDE 0 — COVER
+   =========================================== */
+.slide-cover { background: var(--cover); }
+.slide-cover h1 { font-family: var(--font-display); font-weight: 400; font-size: 84px; line-height: 1.1; letter-spacing: -0.01em; color: var(--text); max-width: 1400px; margin-top: 220px; }
+.slide-cover .logo-pair { display: flex; align-items: center; gap: 24px; }
+.slide-cover .wordmark-cover { display: flex; align-items: center; gap: 13px; }
+.slide-cover .wordmark-cover .mark { width: 36px; height: 28.4px; color: var(--primary); }
+.slide-cover .wordmark-cover span { font-family: var(--font-body); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; color: var(--text); }
+.slide-cover .logo-divider { width: 1px; height: 34px; background: var(--border); }
+.slide-cover .chr-logo { width: 160px; height: auto; }
+.slide-cover .attribution { position: absolute; left: 80px; bottom: 80px; display: flex; flex-direction: column; gap: 14px; }
+.slide-cover .attribution .line { font-family: var(--font-body); font-size: 19px; font-weight: 500; color: #4A453D; line-height: 1.3; }
+.slide-cover .attribution .li-row { display: flex; align-items: center; gap: 10px; }
+.slide-cover .attribution .li-badge { width: 22px; height: 22px; border-radius: 5px; background: #0A66C2; color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: 800; font-size: 13px; letter-spacing: -0.02em; flex-shrink: 0; text-decoration: none; }
+
+/* ===========================================
+   SLIDE 1 — OVERVIEW (six agents)
+   Content below the subtitle is vertically centered in the remaining
+   space via the .fill flex wrapper — this is the pattern to reuse on
+   other slides. Title/subtitle size + position never change.
+   =========================================== */
+.slide-overview .frame { display: flex; flex-direction: column; }
+.slide-overview h1 { font-family: var(--font-display); font-weight: 400; font-size: 64px; color: var(--text); margin-top: 96px; max-width: 1300px; }
+.slide-overview .sub { margin-top: 22px; font-family: var(--font-body); font-size: 26px; color: var(--muted); max-width: 1100px; }
+.slide-overview .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 64px; }
+
+.overview-stats { display: flex; align-items: stretch; gap: 72px; }
+.overview-stats .stat b { font-family: var(--font-display); font-weight: 400; font-size: 92px; line-height: 1; color: var(--text); display: block; }
+.overview-stats .stat span { font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 12px; display: block; }
+.overview-stats .stat-divider { width: 1px; background: var(--border); }
+
+.agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1760px; }
+.agent-card { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 32px 30px; display: flex; flex-direction: column; gap: 16px; }
+.agent-card svg { width: 30px; height: 30px; color: var(--text); }
+.agent-card .name { font-family: var(--font-body); font-weight: 700; font-size: 18.5px; color: var(--text); }
+.agent-card .fn { font-family: var(--font-body); font-size: 14.5px; color: var(--muted); line-height: 1.45; }
+
+/* ===========================================
+   SLIDE 2 — ROADMAP
+   Seven more agents, one row each: name / problem / KPI. Reads like an
+   internal backlog, not a pitch — plain table, no icons, no color.
+   =========================================== */
+.slide-roadmap .frame { display: flex; flex-direction: column; }
+.slide-roadmap h1 { font-family: var(--font-display); font-weight: 400; font-size: 64px; color: var(--text); margin-top: 96px; max-width: 1400px; }
+.slide-roadmap .sub { margin-top: 18px; font-family: var(--font-body); font-size: 20px; color: var(--muted); max-width: 1100px; }
+.slide-roadmap .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.roadmap-table { display: flex; flex-direction: column; }
+.roadmap-row { display: grid; grid-template-columns: 300px 1fr 380px; gap: 32px; padding: 17px 4px; border-bottom: 1px solid var(--border); align-items: center; }
+.roadmap-row.head { padding-top: 0; padding-bottom: 14px; }
+.roadmap-row.head span { font-family: var(--font-body); font-weight: 800; font-size: 16px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+.roadmap-row .name { font-family: var(--font-body); font-weight: 700; font-size: 18px; color: var(--text); }
+.roadmap-row .problem { font-family: var(--font-body); font-size: 15px; color: var(--muted); line-height: 1.4; }
+.roadmap-row .kpi { font-family: var(--font-body); font-size: 14px; color: var(--text); line-height: 1.4; }
+
+/* ===========================================
+   SLIDE 3 — WHAT TO WATCH
+   Pure placeholder / divider slide — a cue to switch to the live demo.
+   Dark surface, single centered line, nothing else.
+   =========================================== */
+.slide-watch { background: var(--dark); }
+.slide-watch .frame { display: flex; align-items: center; justify-content: center; }
+.slide-watch h1 { font-family: var(--font-display); font-weight: 400; font-size: 88px; color: #F7F4EE; text-align: center; }
+
+/* ===========================================
+   SLIDE 3 — THE THREE LAYERS (the landing)
+   Cream, matching the rest of the deck. Left: a big, tightly-overlapped
+   isometric stack of the three layers (SVG, hoverable), drawn with a
+   thin edge face per plate so it reads as slabs, not flat diamonds.
+   Right: an empty panel that fills with that layer's detail on
+   hover/click.
+   =========================================== */
+.slide-layers { background: var(--secondary); }
+.slide-layers .frame { display: flex; flex-direction: column; }
+.slide-layers h1 { font-family: var(--font-display); font-weight: 400; font-size: 64px; line-height: 1.2; color: var(--text); margin-top: 64px; max-width: 1550px; }
+.slide-layers .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.layers-row { display: flex; align-items: center; gap: 56px; }
+
+/* --- stack --- */
+.stack-wrap { width: 820px; flex-shrink: 0; position: relative; }
+.stack-svg { width: 100%; height: auto; overflow: visible; }
+.layer-shape { cursor: pointer; }
+.layer-shape .plate { fill: rgba(255,255,255,0.92); stroke: var(--border); stroke-width: 1.5; transition: fill 0.25s ease, stroke 0.25s ease; }
+.layer-shape .edge { fill: rgba(20,18,15,0.08); stroke: var(--border); stroke-width: 1.5; stroke-linejoin: round; transition: fill 0.25s ease, stroke 0.25s ease; }
+.plate-label { font-family: var(--font-body); font-weight: 700; font-size: 15px; letter-spacing: 2px; fill: var(--text); text-anchor: middle; pointer-events: none; }
+.stack-wrap[data-active="insight"] .plate-insight .plate,
+.stack-wrap[data-active="data"] .plate-data .plate,
+.stack-wrap[data-active="execution"] .plate-execution .plate { fill: #FFFFFF; stroke: var(--tertiary); stroke-width: 2.5; }
+.stack-wrap[data-active="insight"] .plate-insight .edge,
+.stack-wrap[data-active="data"] .plate-data .edge,
+.stack-wrap[data-active="execution"] .plate-execution .edge { fill: rgba(219,139,77,0.22); stroke: var(--tertiary); stroke-width: 2; }
+
+/* --- detail panel --- */
+.detail-panel { flex: 1; min-height: 440px; }
+.detail-block { display: none; }
+.detail-block.active { display: block; }
+.detail-block .layer-desc { font-family: var(--font-body); font-size: 17px; color: var(--muted); line-height: 1.5; max-width: 720px; margin-bottom: 28px; }
+.detail-block .layer-desc b { color: var(--text); font-weight: 600; }
+
+/* execution: branching workflow with real decision points, a loop, a
+   human-approval gate, and a fan-out that hands off to a second agent */
+.exec-flow { width: 100%; height: auto; overflow: visible; }
+.exec-flow .conn { fill: none; stroke: var(--border); stroke-width: 1.5; }
+.exec-flow .conn-loop { fill: none; stroke: var(--tertiary); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.exec-flow .conn-label { font-family: var(--font-body); font-size: 10.5px; font-weight: 700; fill: var(--tertiary); }
+.exec-flow .node-box { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+.exec-flow .node-box.end { fill: var(--secondary); stroke: var(--border); }
+.exec-flow .decision { fill: var(--surface); stroke: var(--tertiary); stroke-width: 1.5; }
+.exec-flow .decision-label { font-family: var(--font-body); font-weight: 700; font-size: 12.5px; fill: var(--text); text-anchor: middle; }
+.exec-flow .icon-sq { rx: 7; }
+.exec-flow .icon-sq.blue { fill: var(--blue); }
+.exec-flow .icon-sq.green { fill: var(--green); }
+.exec-flow .icon-sq.amber { fill: var(--tertiary); }
+.exec-flow .icon-sq.grey { fill: var(--border); }
+.exec-flow .icon-sq.whatsapp { fill: #25D366; }
+.exec-flow .icon-sq.slack { fill: #FFFFFF; stroke: var(--border); stroke-width: 1; }
+.exec-flow .node-label { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; fill: var(--text); }
+
+/* data: schema pile, upright cards, ~5 fields each */
+.data-pile { position: relative; min-height: 460px; }
+.data-card { position: absolute; width: 200px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 16px 18px; box-shadow: 0 8px 18px rgba(20,18,15,0.07); }
+.data-card .th { font-family: var(--font-body); font-weight: 800; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.data-card.from-chr .th { color: #4A453D; }
+.data-card.from-us .th { color: var(--tertiary); }
+.data-card .src { font-family: var(--font-body); font-weight: 700; font-size: 9.5px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+.data-card.from-chr .src { color: #4A453D; }
+.data-card.from-us .src { color: var(--tertiary); }
+.data-card .field { font-family: var(--font-body); font-size: 13px; color: var(--text); padding: 6px 0; border-top: 1px solid var(--border); }
+.data-card .field:first-of-type { border-top: none; }
+
+/* insight: mini dashboard */
+.insight-kpis { display: flex; gap: 16px; margin-bottom: 16px; }
+.insight-kpi { flex: 1; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 16px 18px; }
+.insight-kpi b { font-family: var(--font-display); font-weight: 400; font-size: 28px; color: var(--text); display: block; }
+.insight-kpi span { font-family: var(--font-body); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.insight-minis { display: flex; gap: 16px; }
+.insight-mini { flex: 1; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 16px 18px; }
+.insight-mini .mtitle { font-family: var(--font-body); font-weight: 700; font-size: 12.5px; color: var(--text); margin-bottom: 10px; }
+.insight-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.insight-row .rname { font-family: var(--font-body); font-size: 11.5px; color: var(--muted); width: 108px; flex-shrink: 0; }
+.insight-row .rbar { height: 6px; border-radius: 3px; background: var(--tertiary); opacity: 0.55; }
+
+/* ===========================================
+   SLIDE 5 — OUR PROPOSAL
+   Three panels, same format: what we're proposing, what we need, what
+   happens next. No hierarchy between them, no closing band.
+   =========================================== */
+.slide-proposal .frame { display: flex; flex-direction: column; }
+.slide-proposal h1 { font-family: var(--font-display); font-weight: 400; font-size: 64px; color: var(--text); margin-top: 56px; max-width: 1500px; }
+.slide-proposal .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.proposal-row { display: flex; gap: 24px; }
+.proposal-panel { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 36px 34px; display: flex; flex-direction: column; gap: 14px; }
+.proposal-panel .tag { font-family: var(--font-body); font-weight: 800; font-size: 12.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--tertiary); }
+.proposal-panel h3 { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1.25; color: var(--text); }
+.proposal-panel p { font-family: var(--font-body); font-size: 15px; color: var(--muted); line-height: 1.5; }
+.proposal-panel ul { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-top: 2px; }
+.proposal-panel li { font-family: var(--font-body); font-size: 15px; color: var(--text); line-height: 1.4; padding-left: 16px; position: relative; }
+.proposal-panel li::before { content: "•"; position: absolute; left: 0; color: var(--tertiary); }
+
+/* ===========================================
+   SLIDE 6 — CLOSING
+   Super simple, mirrors the placeholder slide's restraint. One line.
+   =========================================== */
+.slide-closing { background: var(--cover); }
+.slide-closing .frame { display: flex; align-items: center; justify-content: center; }
+.slide-closing h1 { font-family: var(--font-display); font-weight: 400; font-size: 88px; color: var(--text); text-align: center; }
+
+/* ===========================================
+   SLIDE 7 — APPENDIX (plain, never presented live)
+   =========================================== */
+.slide-appendix { background: #FFFFFF; }
+.slide-appendix .frame { padding: 72px 88px; }
+.slide-appendix h1 { font-family: var(--font-body); font-weight: 800; font-size: 30px; color: var(--text); }
+.slide-appendix .sub { font-family: var(--font-body); font-size: 14px; color: var(--muted); margin-top: 6px; }
+.slide-appendix ul { list-style: none; margin-top: 40px; display: flex; flex-direction: column; gap: 20px; max-width: 1500px; }
+.slide-appendix li { font-family: var(--font-body); font-size: 15px; color: var(--text); line-height: 1.55; padding-left: 22px; position: relative; }
+.slide-appendix li::before { content: "•"; position: absolute; left: 0; color: var(--muted); }
+.appendix-tag { position: absolute; top: 40px; right: 88px; font-family: var(--font-body); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; }
+
+/* ===========================================
+   EDIT MODE
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; z-index: 10001; width: 40px; height: 40px; border-radius: 10px; border: none; background: var(--primary); color: #fff; font-size: 16px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; }
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--tertiary); }
+[contenteditable="true"] { outline: 2px dashed var(--tertiary); outline-offset: 4px; cursor: text; }
+
+/* ===========================================
+   DECK CONTROLS
+   =========================================== */
+.deck-controls { display: flex; gap: 12px; align-items: center; font-family: var(--font-body); font-size: 13px; color: var(--muted); }
+.deck-controls button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 15px; }
+.deck-controls .count { padding: 0 4px; }
+.deck-controls .appendix-link { font-family: var(--font-body); font-size: 11.5px; color: var(--muted); text-decoration: underline; cursor: pointer; margin-left: 6px; }
+</style>
+</head>
+<body>
+
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+
+<div class="deck-viewport">
+  <main class="deck-stage" id="deckStage">
+
+    <!-- ======================================================
+         SLIDE 0 — COVER
+         On screen as the call opens. Never presented, never read aloud.
+    ======================================================= -->
+    <section class="slide active slide-cover">
+      <div class="frame">
+        <div class="logo-pair reveal">
+          <div class="wordmark-cover">
+            <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/>
+              <path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/>
+            </svg>
+            <span contenteditable="false">HappyRobot</span>
+          </div>
+
+          <div class="logo-divider"></div>
+
+          <!-- Official C.H. Robinson logo — Wikimedia Commons, public trademark reference used
+               for identification only (this deck is a labeled case study about their account). -->
+          <svg class="chr-logo" viewBox="0 0 65.598456 14.358405" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(-51.952143,-196.79712)">
+            <g transform="translate(0.2645859,-0.26457705)">
+              <g fill="#27adea">
+                <path d="m 56.357953,200.6177 1.287992,-0.74366 v 3.0981 l 0.293864,0.16968 0.294569,-0.17003 v -3.09775 l 1.287992,0.74366 0.294216,-0.50941 -1.876425,-1.08338 -1.876425,1.08338 z"/>
+                <path d="m 55.593624,207.42278 -1.287992,-0.74366 2.682875,-1.54904 v -0.33937 l -0.294216,-0.17004 -2.682875,1.54869 v -1.48731 h -0.588434 v 2.16676 l 1.876425,1.08338 z"/>
+                <path d="m 57.940193,197.32628 -5.98805,3.45722 v 6.9148 l 5.98805,3.45722 5.98805,-3.45722 v -6.9148 z m -5.399617,10.03229 v -6.23534 l 5.399617,-3.1175 5.399617,3.1175 v 6.23534 l -5.399617,3.1175 z"/>
+                <path d="m 60.286803,201.05908 1.287992,0.74366 -3.63467,2.09867 -3.634669,-2.09867 1.287992,-0.74366 -0.293864,-0.50941 -1.876425,1.08303 v 2.16676 h 0.58808 v -1.48731 l 3.635022,2.09867 -3.52e-4,4.197 -1.287992,-0.74366 -0.294217,0.50941 1.876425,1.08338 1.876425,-1.08338 -0.294216,-0.50941 -1.287992,0.74366 v -4.19735 l 3.634669,-2.09832 v 1.48731 h 0.588434 v -2.16676 l -1.876425,-1.08303 z"/>
+                <path d="m 61.869014,204.68218 v 1.48731 l -2.682875,-1.54905 -0.294217,0.16969 v 0.34008 l 2.682875,1.54904 -1.287991,0.74331 0.294216,0.50976 1.876425,-1.08338 v -2.16676 z"/>
+                <path d="m 63.48346,208.71695 h 0.06773 c 0.01482,0 0.02893,-7.1e-4 0.04304,-0.001 0.01376,-0.001 0.02611,-0.004 0.03669,-0.008 0.01094,-0.005 0.0194,-0.012 0.02611,-0.0219 0.0067,-0.0102 0.0099,-0.024 0.0099,-0.0409 0,-0.0148 -0.0028,-0.0268 -0.0088,-0.0356 -0.006,-0.009 -0.01376,-0.0155 -0.02293,-0.0205 -0.0095,-0.005 -0.01976,-0.007 -0.03104,-0.009 -0.01129,-0.001 -0.02258,-0.002 -0.03387,-0.002 h -0.08678 z m -0.06597,-0.19367 h 0.163688 c 0.100895,0 0.151695,0.0413 0.151695,0.12382 0,0.0392 -0.01129,0.0681 -0.03281,0.0864 -0.02222,0.018 -0.04939,0.0289 -0.08185,0.0321 l 0.124531,0.19156 h -0.07091 l -0.117475,-0.18627 h -0.07091 v 0.18627 h -0.06597 z"/>
+                <path d="m 63.559272,208.37479 c -0.201789,0 -0.366183,0.16404 -0.366183,0.36583 0,0.20179 0.164394,0.36618 0.366183,0.36618 0.201789,0 0.365831,-0.16439 0.365831,-0.36618 0,-0.20179 -0.164042,-0.36583 -0.365831,-0.36583 m 0,0.8061 c -0.242711,0 -0.440267,-0.19756 -0.440267,-0.44027 0,-0.24271 0.197556,-0.43991 0.440267,-0.43991 0.242711,0 0.440267,0.1972 0.440267,0.43991 0,0.24271 -0.197556,0.44027 -0.440267,0.44027"/>
+              </g>
+              <g fill="#000000">
+                <path d="m 73.911465,206.00099 c -0.207433,0.2794 -0.566561,0.66216 -1.013531,0.66216 h -0.997655 c -0.175331,0 -0.366889,-0.0635 -0.494595,-0.14358 -0.167569,-0.0956 -0.486833,-0.42298 -0.582436,-0.56656 -0.09596,-0.14358 -0.127705,-0.30303 -0.127705,-0.45473 v -2.51389 c 0,-0.15134 0.03175,-0.30304 0.127705,-0.44662 0.0956,-0.13582 0.414867,-0.47907 0.582436,-0.57467 0.127706,-0.072 0.319264,-0.14358 0.494595,-0.14358 h 0.997655 c 0.44697,0 0.806098,0.39087 1.013531,0.66216 0.06385,0.0878 0.0956,0.15169 0.167569,0.2794 l -0.813858,0.23142 c 0,0 -0.239536,-0.29527 -0.359128,-0.36724 -0.0081,-0.008 -0.02399,-0.008 -0.0321,-0.008 h -0.941564 c -0.01588,0 -0.0321,0.008 -0.0321,0.008 -0.103364,0.0561 -0.279047,0.22366 -0.358775,0.35137 -0.0081,0.0159 -0.0081,0.0716 -0.0081,0.0875 v 2.42605 c 0,0.0959 0.247297,0.30339 0.366889,0.36724 0.0081,0.008 0.04798,0.008 0.05609,0.008 h 0.909813 c 0.0078,0 0.02399,0 0.03986,-0.008 0.16757,-0.0797 0.359128,-0.375 0.359128,-0.375 l 0.813858,0.21519 c -0.06385,0.14393 -0.103716,0.21555 -0.167569,0.30339"/>
+                <path d="m 74.813412,205.61804 h 0.981428 v 1.00542 h -0.981428 z"/>
+                <path d="m 79.21047,206.62339 v -1.97097 h -1.739547 v 1.97097 h -0.837847 v -4.77202 h 0.837847 v 2.00307 h 1.739547 v -2.00307 h 0.837847 v 4.77202 z"/>
+                <path d="m 80.886482,205.61804 h 0.981427 v 1.00542 h -0.981427 z"/>
+                <path d="m 87.071064,202.96057 c 0,0 0,-0.0399 -0.0081,-0.0557 -0.04762,-0.0878 -0.17533,-0.24765 -0.255058,-0.25541 h -1.444625 v 1.29258 h 1.404408 c 0.07197,0 0.231422,-0.1517 0.295275,-0.26317 0,0 0.0081,-0.0159 0.0081,-0.0321 z m 0.694267,1.1811 c -0.07197,0.10372 -0.319264,0.34325 -0.431095,0.42298 -0.0635,0.0476 -0.135466,0.0878 -0.207433,0.11148 l 0.949678,1.94733 h -0.909814 l -0.885472,-1.88348 h -0.917928 v 1.88348 H 84.52542 v -4.77202 h 2.242255 c 0.191558,0 0.407106,0.0639 0.566561,0.17533 0.111831,0.0801 0.359128,0.33514 0.431095,0.43921 0.0956,0.14358 0.14358,0.31891 0.14358,0.48648 v 0.70238 c 0,0.17568 -0.04798,0.34325 -0.14358,0.48683"/>
+                <path d="m 89.688745,205.48226 c 0,0 0,0.024 0.0081,0.0318 0.0956,0.14393 0.263172,0.29527 0.351014,0.34325 0.01588,0.008 0.03175,0.008 0.03986,0.008 h 1.148997 c 0,0 0.02399,0 0.03986,-0.008 0.08784,-0.048 0.255411,-0.19932 0.351366,-0.34325 0.0078,-0.0159 0.0078,-0.0318 0.0078,-0.0318 v -2.46592 c 0,0 0,-0.0318 -0.0078,-0.0399 -0.09596,-0.14358 -0.263525,-0.30339 -0.351366,-0.35101 -0.01588,-0.008 -0.03175,-0.008 -0.03986,-0.008 h -1.148997 c 0,0 -0.03175,0 -0.03986,0.008 -0.08784,0.0476 -0.255411,0.20743 -0.351014,0.35101 -0.0081,0.0159 -0.0081,0.0399 -0.0081,0.0399 z m 2.657475,0.46284 c -0.10407,0.13582 -0.415219,0.47872 -0.582789,0.57468 -0.127705,0.0797 -0.327025,0.14358 -0.494594,0.14358 h -1.21285 c -0.175684,0 -0.367242,-0.0639 -0.494948,-0.14358 -0.167569,-0.096 -0.486833,-0.43886 -0.582436,-0.57468 -0.09596,-0.14358 -0.127705,-0.30338 -0.127705,-0.45473 v -2.49802 c 0,-0.15134 0.03175,-0.31115 0.127705,-0.45473 0.0956,-0.13546 0.414867,-0.47872 0.582436,-0.57467 0.127706,-0.0797 0.319264,-0.14358 0.494948,-0.14358 h 1.21285 c 0.167569,0 0.366889,0.0639 0.494594,0.14358 0.16757,0.0959 0.478719,0.43921 0.582789,0.57467 0.0956,0.14358 0.127705,0.30339 0.127705,0.45473 v 2.49802 c 0,0.15135 -0.0321,0.31115 -0.127705,0.45473"/>
+                <path d="m 96.041038,205.50618 v -0.56656 c 0,-0.024 -0.0081,-0.0399 -0.0081,-0.0399 -0.07161,-0.12771 -0.223308,-0.27129 -0.295275,-0.27129 h -1.396294 v 1.19697 h 1.404408 c 0.07197,0 0.231422,-0.14358 0.287161,-0.26352 0,0 0.0081,-0.024 0.0081,-0.0557 m 0,-1.97097 v -0.56656 c 0,-0.0159 -0.0081,-0.0399 -0.0081,-0.0399 -0.07161,-0.12771 -0.223308,-0.2794 -0.295275,-0.2794 h -1.396294 v 1.20508 h 1.404408 c 0.07197,0 0.231422,-0.14393 0.287161,-0.26352 0,0 0.0081,-0.0159 0.0081,-0.0557 m 0.702381,2.48179 c -0.07197,0.10372 -0.311503,0.35102 -0.422981,0.43074 -0.159808,0.11183 -0.383117,0.17569 -0.574675,0.17569 h -2.242255 v -4.77203 h 2.242255 c 0.207433,0 0.414867,0.0716 0.574675,0.18345 0.111478,0.0797 0.351014,0.32702 0.422981,0.43109 0.103716,0.15134 0.135466,0.33514 0.135466,0.4946 v 0.59055 c 0,0.33513 -0.127705,0.51082 -0.31115,0.69426 0.183445,0.18345 0.31115,0.35102 0.31115,0.68616 v 0.60642 c 0,0.16792 -0.03986,0.33549 -0.135466,0.47907"/>
+                <path d="m 98.012431,201.85144 h 0.837847 v 4.77202 h -0.837847 z"/>
+                <path d="m 102.56898,206.62339 -1.65171,-3.16794 v 3.16794 h -0.8382 v -4.77202 h 0.90206 l 1.63583,3.2078 v -3.2078 h 0.83784 v 4.77202 z"/>
+                <path d="m 107.96366,205.94511 c -0.0956,0.14358 -0.41487,0.47872 -0.58244,0.57467 -0.1277,0.0716 -0.32737,0.14359 -0.49494,0.14359 h -1.38854 c -0.4706,0 -0.80609,-0.38312 -1.01353,-0.66252 -0.0639,-0.0875 -0.0797,-0.12771 -0.14358,-0.2473 l 0.79022,-0.26317 c 0,0 0.15946,0.22331 0.35102,0.36689 0,0 0.0159,0.008 0.0557,0.008 h 1.3088 c 0.0317,0 0.048,-0.008 0.048,-0.008 0.11959,-0.0639 0.35913,-0.30304 0.35913,-0.36689 v -0.47096 c 0,-0.072 -0.0561,-0.1277 -0.096,-0.13547 l -2.07468,-0.59055 c -0.40711,-0.11183 -0.6223,-0.50306 -0.6223,-0.86995 v -0.43109 c 0,-0.13547 0.0236,-0.31115 0.11959,-0.45473 0.0956,-0.14358 0.42298,-0.47872 0.59055,-0.57468 0.1277,-0.0716 0.31891,-0.14358 0.49459,-0.14358 h 1.1811 c 0.47872,0 0.8061,0.39088 1.01353,0.66252 0.0639,0.0878 0.10372,0.15946 0.15946,0.27905 l -0.80575,0.23142 c 0,0 -0.18379,-0.26317 -0.35136,-0.36689 0,0 -0.008,-0.008 -0.0476,-0.008 h -1.12536 c -0.0318,0 -0.048,0.008 -0.048,0.008 -0.12735,0.0639 -0.3429,0.28716 -0.3429,0.35102 v 0.39899 c 0,0.072 0.0476,0.1277 0.0879,0.13582 l 2.0828,0.60642 c 0.40675,0.11148 0.6223,0.51082 0.6223,0.86995 v 0.50271 c 0,0.13547 -0.024,0.31115 -0.12771,0.45473"/>
+                <path d="m 109.83119,205.48226 c 0,0 0,0.024 0.008,0.0318 0.0956,0.14393 0.26318,0.29527 0.35102,0.34325 0.0159,0.008 0.0318,0.008 0.0399,0.008 h 1.149 c 0,0 0.024,0 0.0399,-0.008 0.0878,-0.048 0.25541,-0.19932 0.35137,-0.34325 0.008,-0.0159 0.008,-0.0318 0.008,-0.0318 v -2.46592 c 0,0 0,-0.0318 -0.008,-0.0399 -0.096,-0.14358 -0.26353,-0.30339 -0.35137,-0.35101 -0.0159,-0.008 -0.0318,-0.008 -0.0399,-0.008 h -1.149 c 0,0 -0.0318,0 -0.0399,0.008 -0.0878,0.0476 -0.25541,0.20743 -0.35102,0.35101 -0.008,0.0159 -0.008,0.0399 -0.008,0.0399 z m 2.65747,0.46284 c -0.10406,0.13582 -0.41521,0.47872 -0.58278,0.57468 -0.12771,0.0797 -0.32703,0.14358 -0.4946,0.14358 h -1.21285 c -0.17568,0 -0.36724,-0.0639 -0.49495,-0.14358 -0.16756,-0.096 -0.48683,-0.43886 -0.58243,-0.57468 -0.096,-0.14358 -0.12771,-0.30338 -0.12771,-0.45473 v -2.49802 c 0,-0.15134 0.0318,-0.31115 0.12771,-0.45473 0.0956,-0.13546 0.41487,-0.47872 0.58243,-0.57467 0.12771,-0.0797 0.31927,-0.14358 0.49495,-0.14358 h 1.21285 c 0.16757,0 0.36689,0.0639 0.4946,0.14358 0.16757,0.0959 0.47872,0.43921 0.58278,0.57467 0.0956,0.14358 0.12736,0.30339 0.12736,0.45473 v 2.49802 c 0,0.15135 -0.0318,0.31115 -0.12736,0.45473"/>
+                <path d="m 116.13561,206.62339 -1.65171,-3.16794 v 3.16794 h -0.8382 v -4.77202 h 0.90206 l 1.63583,3.2078 v -3.2078 h 0.83784 v 4.77202 z"/>
+              </g>
+            </g>
+          </g>
+          </svg>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">CH Robinson<br>Business Review</h1>
+
+        <div class="attribution reveal">
+          <div class="line li-row">
+            <span contenteditable="false">André Leite</span>
+            <a class="li-badge" href="https://www.linkedin.com/in/andre-w-g-leite/" target="_blank" rel="noopener" title="LinkedIn · André Leite">in</a>
+          </div>
+          <div class="line" contenteditable="false">Deployment Strategist</div>
+          <div class="line" contenteditable="false">August 27, 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 1 — OVERVIEW
+         Movement 2 (4–7min). Plants the premise (six agents, all outbound,
+         low context) as a fact grid. The reframe argument itself — "that's
+         why read was never needed, and it's the right call" — is SPOKEN,
+         not printed here. No performance numbers.
+    ======================================================= -->
+    <section class="slide slide-overview">
+      <div class="frame">
+        <div class="wordmark reveal">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">Six outbound voice agents are live today.</h1>
+        <p class="sub reveal" contenteditable="false">We started with outbound voice-only agents, in use cases that need the least context.</p>
+
+        <!-- SPOKEN (not on slide): "That's exactly why we never needed to read anything from your side —
+             and why the setup we agreed on six months ago was the right setup." -->
+
+        <div class="fill">
+        <div class="overview-stats reveal">
+          <div class="stat"><b contenteditable="false">70K</b><span contenteditable="false">Monthly calls</span></div>
+          <div class="stat-divider"></div>
+          <div class="stat"><b contenteditable="false">86%</b><span contenteditable="false">Success rate</span></div>
+        </div>
+
+        <div class="agent-grid reveal">
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.58 7-12A7 7 0 0 0 5 9c0 4.42 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>
+            <div class="name" contenteditable="false">Track &amp; Trace</div>
+            <div class="fn" contenteditable="false">Confirms shipment location and ETA</div>
+          </div>
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.9-5.4"/><path d="M20 12a8 8 0 0 1-13.9 5.4"/><path d="M17.5 3v4.2h-4.2M6.5 21v-4.2h4.2"/></svg>
+            <div class="name" contenteditable="false">Dormant Customer Reactivation</div>
+            <div class="fn" contenteditable="false">Re-engages customers gone quiet</div>
+          </div>
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14.5h2M8 17.5h5"/></svg>
+            <div class="name" contenteditable="false">Appointment Scheduling</div>
+            <div class="fn" contenteditable="false">Books pickup and delivery windows</div>
+          </div>
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h9l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z"/><path d="M9 12h6M9 15.5h6M9 8.5h3"/></svg>
+            <div class="name" contenteditable="false">Collections</div>
+            <div class="fn" contenteditable="false">Follows up on outstanding balances</div>
+          </div>
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9.5" width="12" height="7" rx="1.5"/><path d="M15 12h3.3L21 14.8V16a.7.7 0 0 1-.7.7H19"/><circle cx="7" cy="17.3" r="1.6"/><circle cx="17.3" cy="17.3" r="1.6"/></svg>
+            <div class="name" contenteditable="false">Driver Location Confirmation</div>
+            <div class="fn" contenteditable="false">Confirms a driver's real-time position</div>
+          </div>
+          <div class="agent-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.6 3 7.9 7 9 4-1.1 7-4.4 7-9V6l-7-3Z"/><path d="M9 12.3l2 2 4-4.2"/></svg>
+            <div class="name" contenteditable="false">Carrier Compliance</div>
+            <div class="fn" contenteditable="false">Verifies insurance and authority status</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 2 — ROADMAP
+         Right after the six live agents. Same design, seven more rows:
+         name / problem / KPI. No numbers, no color, reads like a backlog
+         he'd recognize from his own team.
+    ======================================================= -->
+    <section class="slide slide-roadmap">
+      <div class="frame">
+        <div class="wordmark reveal">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">It's time to go after harder problems.</h1>
+        <p class="sub reveal" contenteditable="false">We built this roadmap together with your operations team.</p>
+
+        <div class="fill">
+        <div class="roadmap-table reveal">
+          <div class="roadmap-row head">
+            <span contenteditable="false">Agent</span>
+            <span contenteditable="false">Problem it solves</span>
+            <span contenteditable="false">KPI it moves</span>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Release Verification</div>
+            <div class="problem" contenteditable="false">Driver runs into a problem loading at the dock and needs help, in the moment.</div>
+            <div class="kpi" contenteditable="false">Loads recovered before they become a cancellation.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Facility Verification</div>
+            <div class="problem" contenteditable="false">Confirms the driver's problem directly with the shipper, independent evidence, paired with Release Verification.</div>
+            <div class="kpi" contenteditable="false">% of accessorial charges backed by two-sided evidence.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Accessorial Verification</div>
+            <div class="problem" contenteditable="false">Driver disputes an accessorial charge that doesn't match what happened.</div>
+            <div class="kpi" contenteditable="false">% of disputes resolved without escalation.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Rate Confirmation</div>
+            <div class="problem" contenteditable="false">Dispatch without a verbal rate confirmation turns into a dispute later.</div>
+            <div class="kpi" contenteditable="false">Reduction in post-dispatch rate disputes.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Reload Matching</div>
+            <div class="problem" contenteditable="false">Driver sits idle because the search for the next load starts too late.</div>
+            <div class="kpi" contenteditable="false">Reduction in empty miles.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Re-route</div>
+            <div class="problem" contenteditable="false">Delivery location changes mid-route, someone has to call the driver.</div>
+            <div class="kpi" contenteditable="false">Time between the change and the driver knowing.</div>
+          </div>
+          <div class="roadmap-row">
+            <div class="name" contenteditable="false">Breakdown</div>
+            <div class="problem" contenteditable="false">Driver calls in a breakdown, the delivery is going to be late.</div>
+            <div class="kpi" contenteditable="false">Time between the call and the shipper knowing.</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 3 — WHAT TO WATCH
+         End of Movement 2 / start of Movement 3. Pure placeholder — a
+         cue to switch to the live demo. Everything else (scene-setting,
+         "watch for" framing) is SPOKEN, not printed.
+    ======================================================= -->
+    <section class="slide slide-watch">
+      <div class="frame">
+        <div class="wordmark on-dark reveal" style="position:absolute; top:80px; left:80px;">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <!-- SPOKEN (not on slide): "I sent you a recording ahead of time in case you wanted the
+             detail. I'd rather do it live — I want you to watch it handle something in real time."
+             Scene-setting (owner-operator, unattended dock outside Chicago) and the "watch for what
+             it knows / decides / refuses" framing are also delivered live, not printed here. -->
+
+        <h1 class="reveal" contenteditable="false">Release verification agent prototype</h1>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 3 — THE THREE LAYERS
+         First slide back from the demo. Names what they just watched
+         (WF / twin / app → execution / data / insight) and lands the
+         peer principle: his agents read the same record, not below it.
+    ======================================================= -->
+    <section class="slide slide-layers">
+      <div class="frame">
+        <div class="wordmark reveal">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <!-- SPOKEN transition (not on slide): "That's it working. Now let me show you
+             what it can't do yet, and what it needs from you." -->
+
+        <h1 class="reveal" contenteditable="false">We've built a platform where every C.H. Robinson agent can live.</h1>
+
+        <div class="fill">
+        <div class="layers-row reveal">
+
+          <!-- STACK: hover or click a layer to fill the panel on the right.
+               Heavy overlap + a single closed wedge face (both sides) per
+               plate so it reads as three stacked slabs, not flat diamonds.
+               Labels sit rotated on the exposed right side of each plate. -->
+          <div class="stack-wrap" id="stackWrap">
+            <svg class="stack-svg" viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg">
+              <!-- Execution (bottom, drawn first = furthest back) -->
+              <g class="layer-shape plate-execution edge-execution" data-layer="execution">
+                <polygon class="edge" points="40,264 320,326 600,264 600,284 320,346 40,284"/>
+                <polygon class="plate" points="320,202 600,264 320,326 40,264"/>
+              </g>
+              <!-- Data (middle) -->
+              <g class="layer-shape plate-data edge-data" data-layer="data">
+                <polygon class="edge" points="40,202 320,264 600,202 600,222 320,284 40,222"/>
+                <polygon class="plate" points="320,140 600,202 320,264 40,202"/>
+              </g>
+              <!-- Insight (top, drawn last = frontmost) -->
+              <g class="layer-shape plate-insight edge-insight" data-layer="insight">
+                <polygon class="edge" points="40,140 320,202 600,140 600,160 320,222 40,160"/>
+                <polygon class="plate" points="320,78 600,140 320,202 40,140"/>
+              </g>
+
+              <!-- Labels sit inside each plate, on its right side, angled to
+                   match the plate's own edge slope so they stay clear of the
+                   overlap zone (which sits toward the center, x<400) without
+                   ever leaving the shape. -->
+              <text class="plate-label" x="460" y="140" transform="rotate(-13 460 140)">INSIGHT</text>
+              <text class="plate-label" x="460" y="212" transform="rotate(-13 460 212)">DATA</text>
+              <text class="plate-label" x="460" y="274" transform="rotate(-13 460 274)">EXECUTION</text>
+            </svg>
+          </div>
+
+          <!-- DETAIL PANEL: empty until a layer is hovered/clicked -->
+          <div class="detail-panel">
+
+            <div class="detail-block" data-panel="insight">
+              <p class="layer-desc" contenteditable="false"><b>Analytics from two sources.</b> Your TMS, and everything the agents capture on the call.</p>
+              <div class="insight-kpis">
+                <div class="insight-kpi"><b contenteditable="false">$930</b><span contenteditable="false">Revenue the agent created</span></div>
+                <div class="insight-kpi"><b contenteditable="false">1h38</b><span contenteditable="false">Avg. time sat past release</span></div>
+              </div>
+              <div class="insight-minis">
+                <div class="insight-mini">
+                  <div class="mtitle" contenteditable="false">Facility worklist</div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">Dock 14 · Elgin</span><span class="rbar" style="width:82%"></span></div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">Dock 03 · Joliet</span><span class="rbar" style="width:61%"></span></div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">Dock 22 · Cicero</span><span class="rbar" style="width:44%"></span></div>
+                </div>
+                <div class="insight-mini">
+                  <div class="mtitle" contenteditable="false">Why the pickup failed</div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">No one at dock</span><span class="rbar" style="width:68%"></span></div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">Wrong window</span><span class="rbar" style="width:22%"></span></div>
+                  <div class="insight-row"><span class="rname" contenteditable="false">Access denied</span><span class="rbar" style="width:10%"></span></div>
+                </div>
+              </div>
+              <div class="insight-mini" style="margin-top:16px;">
+                <div class="mtitle" contenteditable="false">Agent performance</div>
+                <div class="insight-row"><span class="rname" contenteditable="false">Contained, no human</span><span class="rbar" style="width:74%"></span></div>
+                <div class="insight-row"><span class="rname" contenteditable="false">Escalated to ops</span><span class="rbar" style="width:18%"></span></div>
+                <div class="insight-row"><span class="rname" contenteditable="false">Failed, retried</span><span class="rbar" style="width:8%"></span></div>
+              </div>
+            </div>
+
+            <div class="detail-block" data-panel="data">
+              <p class="layer-desc" contenteditable="false"><b>Structured facts, not transcripts.</b> Written back to the TMS, and held in a queryable store on our side.</p>
+              <div class="data-pile">
+                <div class="data-card from-chr" style="top:0px; left:0px; z-index:1;">
+                  <span class="src" contenteditable="false">From the TMS</span>
+                  <div class="th" contenteditable="false">shipments</div>
+                  <div class="field" contenteditable="false">load_status</div>
+                  <div class="field" contenteditable="false">origin</div>
+                  <div class="field" contenteditable="false">destination</div>
+                  <div class="field" contenteditable="false">carrier_id</div>
+                  <div class="field" contenteditable="false">pickup_window</div>
+                </div>
+                <div class="data-card from-chr" style="top:30px; left:230px; z-index:2;">
+                  <span class="src" contenteditable="false">From the TMS</span>
+                  <div class="th" contenteditable="false">facilities</div>
+                  <div class="field" contenteditable="false">facility_id</div>
+                  <div class="field" contenteditable="false">address</div>
+                  <div class="field" contenteditable="false">dock_count</div>
+                  <div class="field" contenteditable="false">hours</div>
+                  <div class="field" contenteditable="false">region</div>
+                </div>
+                <div class="data-card from-us" style="top:0px; left:460px; z-index:1;">
+                  <span class="src" contenteditable="false">Generated by us</span>
+                  <div class="th" contenteditable="false">calls</div>
+                  <div class="field" contenteditable="false">call_outcome</div>
+                  <div class="field" contenteditable="false">duration</div>
+                  <div class="field" contenteditable="false">driver_id</div>
+                  <div class="field" contenteditable="false">sentiment</div>
+                  <div class="field" contenteditable="false">timestamp</div>
+                </div>
+                <div class="data-card from-us" style="top:255px; left:120px; z-index:3;">
+                  <span class="src" contenteditable="false">Generated by us</span>
+                  <div class="th" contenteditable="false">detentions</div>
+                  <div class="field" contenteditable="false">detention_minutes</div>
+                  <div class="field" contenteditable="false">compliance_flag</div>
+                  <div class="field" contenteditable="false">rate_per_hour</div>
+                  <div class="field" contenteditable="false">free_time_used</div>
+                  <div class="field" contenteditable="false">dispute_status</div>
+                </div>
+                <div class="data-card from-us" style="top:280px; left:400px; z-index:2;">
+                  <span class="src" contenteditable="false">Generated by us</span>
+                  <div class="th" contenteditable="false">exceptions</div>
+                  <div class="field" contenteditable="false">exception_type</div>
+                  <div class="field" contenteditable="false">severity</div>
+                  <div class="field" contenteditable="false">resolved</div>
+                  <div class="field" contenteditable="false">assigned_to</div>
+                  <div class="field" contenteditable="false">created_at</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-block" data-panel="execution">
+              <p class="layer-desc" contenteditable="false"><b>More than talk.</b> Messaging, coordination, database actions, and reasoning.</p>
+
+              <!-- Straight vertical spine, then one node forks into three
+                   parallel actions — one box connecting out to the rest,
+                   not a conditional branch. -->
+              <svg class="exec-flow" viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- connectors, drawn first (behind nodes) -->
+                <path class="conn" d="M320,65 L320,95"/>
+                <path class="conn" d="M320,145 L320,175"/>
+                <path class="conn" d="M320,225 L320,255"/>
+                <path class="conn" d="M320,305 L320,320 L110,320 L110,335"/>
+                <path class="conn" d="M320,305 L320,335"/>
+                <path class="conn" d="M320,305 L320,320 L530,320 L530,335"/>
+
+                <!-- 1. Receive call -->
+                <g>
+                  <rect class="node-box" x="220" y="15" width="200" height="50" rx="10"/>
+                  <rect class="icon-sq blue" x="232" y="26" width="28" height="28"/>
+                  <svg x="237" y="31" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v4a2 2 0 0 0 2 2h1v-6H5a1 1 0 0 0-1 1Z"/><path d="M20 13v4a2 2 0 0 1-2 2h-1v-6h1a1 1 0 0 1 1 1Z"/></svg>
+                  <text class="node-label" x="273" y="45">Receive call</text>
+                </g>
+                <!-- 2. Understand request -->
+                <g>
+                  <rect class="node-box" x="220" y="95" width="200" height="50" rx="10"/>
+                  <rect class="icon-sq amber" x="232" y="106" width="28" height="28"/>
+                  <svg x="237" y="111" width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg>
+                  <text class="node-label" x="273" y="125">Understand request</text>
+                </g>
+                <!-- 3. Look for a new load -->
+                <g>
+                  <rect class="node-box" x="220" y="175" width="200" height="50" rx="10"/>
+                  <rect class="icon-sq blue" x="232" y="186" width="28" height="28"/>
+                  <svg x="237" y="191" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M19 19l-4.3-4.3"/></svg>
+                  <text class="node-label" x="273" y="205">Look for a new load</text>
+                </g>
+                <!-- 4. Ask for approval -->
+                <g>
+                  <rect class="node-box" x="220" y="255" width="200" height="50" rx="10"/>
+                  <rect class="icon-sq amber" x="232" y="266" width="28" height="28"/>
+                  <svg x="237" y="271" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>
+                  <text class="node-label" x="273" y="285">Ask for approval</text>
+                </g>
+
+                <!-- fork: one node, three parallel actions -->
+                <!-- 5. Update record -->
+                <g>
+                  <rect class="node-box" x="15" y="335" width="190" height="50" rx="10"/>
+                  <rect class="icon-sq green" x="27" y="346" width="28" height="28"/>
+                  <svg x="32" y="351" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.5"/><path d="M4.5 5.5V18c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5V5.5"/><path d="M4.5 12c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5"/></svg>
+                  <text class="node-label" x="68" y="365">Update record</text>
+                </g>
+                <!-- 6. Send a WhatsApp -->
+                <g>
+                  <rect class="node-box" x="225" y="335" width="190" height="50" rx="10"/>
+                  <rect class="icon-sq whatsapp" x="237" y="346" width="28" height="28"/>
+                  <svg x="243" y="351" width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                  <text class="node-label" x="278" y="365">Send a WhatsApp</text>
+                </g>
+                <!-- 7. Notify on Slack -->
+                <g>
+                  <rect class="node-box" x="435" y="335" width="190" height="50" rx="10"/>
+                  <rect class="icon-sq slack" x="447" y="346" width="28" height="28"/>
+                  <svg x="453" y="352" width="17" height="17" viewBox="0 0 24 24" fill="#4A154B"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
+                  <text class="node-label" x="488" y="365">Notify on Slack</text>
+                </g>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 5 — OUR PROPOSAL
+         Movement 5. Three panels, same weight: what we're proposing,
+         what we need, what happens next.
+    ======================================================= -->
+    <section class="slide slide-proposal">
+      <div class="frame">
+        <div class="wordmark reveal">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">What I'm proposing, and what I need from you.</h1>
+
+        <div class="fill">
+        <div class="proposal-row reveal">
+          <div class="proposal-panel">
+            <div class="tag" contenteditable="false">Proposal</div>
+            <h3 contenteditable="false">Put Release Verification into production.</h3>
+            <p contenteditable="false">Inside the 30% capacity gap already in the contract. No new cost, no new contract line.</p>
+          </div>
+          <div class="proposal-panel">
+            <div class="tag" contenteditable="false">The ask</div>
+            <h3 contenteditable="false">Read access to some TMS fields.</h3>
+            <p contenteditable="false">So the agent can see what it's confirming. Nothing else changes on your side.</p>
+          </div>
+          <div class="proposal-panel">
+            <div class="tag" contenteditable="false">Next steps</div>
+            <h3 contenteditable="false">One design review, next week.</h3>
+            <p contenteditable="false">1 engineer from your side. We build the first agent, run 60 days of pilot, then look at the rest of the roadmap together.</p>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 6 — CLOSING
+         Last slide on screen. Nothing to explain, nothing to read.
+    ======================================================= -->
+    <section class="slide slide-closing">
+      <div class="frame">
+        <div class="wordmark reveal" style="position:absolute; top:80px; left:80px;">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">Thank you.</h1>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE 7 — APPENDIX: PROTOTYPE CAVEATS
+         Never presented. Excluded from live forward-navigation (see JS).
+         Exists so the deck survives being forwarded to two engineers
+         who never heard André speak. Deliberately unstyled.
+    ======================================================= -->
+    <section class="slide slide-appendix">
+      <div class="frame">
+        <div class="appendix-tag" contenteditable="false">Not presented</div>
+        <h1 contenteditable="false">Prototype caveats</h1>
+        <p class="sub" contenteditable="false">What was built for this conversation, and where it stops.</p>
+        <ul>
+          <li contenteditable="false">The write-back POST targets a test endpoint, not Navisphere. What's proven is the payload shape and the delivery, not the connection.</li>
+          <li contenteditable="false">The arrival timestamp is seeded data. The geofence mechanism is real; that specific number did not come off a truck.</li>
+          <li contenteditable="false">Routing is free-flow road distance on a car profile, not live traffic, and not a 53-foot profile. The production equivalent is a commercial truck router.</li>
+          <li contenteditable="false">Detention and TONU values are market ranges, not contract rates.</li>
+          <li contenteditable="false">Hours-of-Service rules are industry knowledge from memory. They were not verified against the regulator for this exercise.</li>
+          <li contenteditable="false">The dashboard dataset is synthetic, except the record generated by the recorded call.</li>
+          <li contenteditable="false">The two-hour free time and the release trigger are conditions of this scenario, not asserted market practice.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="deck-controls" id="deckControls">
+  <button id="prevBtn" aria-label="Previous slide">‹</button>
+  <span class="count"><span id="curNum">1</span> / <span id="totalNum">6</span></span>
+  <button id="nextBtn" aria-label="Next slide">›</button>
+  <span class="appendix-link" id="appendixLink">Appendix</span>
+</div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Slide 6 (appendix) is excluded from live forward navigation on
+   purpose — it must never appear on screen during the meeting. It's
+   reachable only via the explicit "Appendix" link, and it always
+   prints/exports (see @media print in viewport-base.css).
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.liveCount = this.slides.length - 1; // last slide = hidden appendix
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.curNum = document.getElementById('curNum');
+        this.totalNum = document.getElementById('totalNum');
+        this.totalNum.textContent = this.liveCount;
+
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupButtons();
+        this.showSlide(0);
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault(); this.showSlide(this.currentSlide + 1, true);
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault(); this.showSlide(this.currentSlide - 1, true);
+            }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        this.stage.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 50) this.showSlide(this.currentSlide + (dx < 0 ? 1 : -1), true);
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let locked = false;
+        window.addEventListener('wheel', (e) => {
+            if (locked) return;
+            if (Math.abs(e.deltaY) < 24) return;
+            locked = true;
+            this.showSlide(this.currentSlide + (e.deltaY > 0 ? 1 : -1), true);
+            setTimeout(() => { locked = false; }, 700);
+        }, { passive: true });
+    }
+
+    setupButtons() {
+        document.getElementById('prevBtn').addEventListener('click', () => this.showSlide(this.currentSlide - 1, true));
+        document.getElementById('nextBtn').addEventListener('click', () => this.showSlide(this.currentSlide + 1, true));
+        document.getElementById('appendixLink').addEventListener('click', () => this.showSlide(this.slides.length - 1, false));
+    }
+
+    // capLive: true = normal presenting nav, clamps below the hidden appendix slide
+    showSlide(index, capLive) {
+        const max = capLive ? this.liveCount - 1 : this.slides.length - 1;
+        this.currentSlide = Math.max(0, Math.min(index, max));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.curNum.textContent = this.currentSlide < this.liveCount ? this.currentSlide + 1 : 'A';
+    }
+}
+
+/* ===========================================
+   INLINE EDITING — hover hotzone + E key toggle
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.getElementById('editHotzone');
+        this.editableEls = document.querySelectorAll('.slide [contenteditable]');
+        this.hideTimeout = null;
+
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+        this.hotzone.addEventListener('mouseenter', () => { clearTimeout(this.hideTimeout); this.toggle.classList.add('show'); });
+        this.hotzone.addEventListener('mouseleave', () => { this.hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+        this.toggle.addEventListener('mouseenter', () => clearTimeout(this.hideTimeout));
+        this.toggle.addEventListener('mouseleave', () => { this.hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && (!e.target.getAttribute || e.target.getAttribute('contenteditable') !== 'true')) {
+                this.toggleEditMode();
+            }
+            if (e.key === 's' && (e.metaKey || e.ctrlKey) && this.isActive) { e.preventDefault(); this.save(); }
+        });
+
+        this.restore();
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.toggle.classList.toggle('show', this.isActive);
+        this.editableEls.forEach(el => el.setAttribute('contenteditable', this.isActive ? 'true' : 'false'));
+        if (!this.isActive) this.save();
+    }
+
+    save() {
+        const data = {};
+        this.editableEls.forEach((el, i) => { data[i] = el.innerHTML; });
+        try { localStorage.setItem('chr-deck', JSON.stringify(data)); } catch (e) {}
+    }
+
+    restore() {
+        try {
+            const raw = localStorage.getItem('chr-deck');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            this.editableEls.forEach((el, i) => { if (data[i] !== undefined) el.innerHTML = data[i]; });
+        } catch (e) {}
+    }
+}
+
+/* ===========================================
+   LAYER STACK — Slide 3 hover/click controller.
+   Hover previews a layer's detail; click pins it open (click again,
+   or click another layer, to change). Nothing pinned = empty panel.
+   =========================================== */
+class LayerStack {
+    constructor(root) {
+        this.root = root;
+        if (!this.root) return;
+        this.shapes = this.root.querySelectorAll('[data-layer]');
+        this.panels = document.querySelectorAll('.detail-block');
+        this.pinned = null;
+
+        this.shapes.forEach(shape => {
+            const layer = shape.dataset.layer;
+            shape.addEventListener('mouseenter', () => { if (!this.pinned) this.setActive(layer); });
+            shape.addEventListener('mouseleave', () => { if (!this.pinned) this.setActive(null); });
+            shape.addEventListener('click', () => {
+                this.pinned = (this.pinned === layer) ? null : layer;
+                this.setActive(this.pinned);
+            });
+        });
+    }
+
+    setActive(layer) {
+        if (layer) { this.root.dataset.active = layer; } else { delete this.root.dataset.active; }
+        this.panels.forEach(p => p.classList.toggle('active', p.dataset.panel === layer));
+    }
+}
+
+new SlidePresentation();
+new InlineEditor();
+new LayerStack(document.getElementById('stackWrap'));
+</script>
+</body>
+</html>
