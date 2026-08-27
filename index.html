@@ -106,6 +106,19 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 .slide-cover .attribution .li-badge { width: 22px; height: 22px; border-radius: 5px; background: #0A66C2; color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: 800; font-size: 13px; letter-spacing: -0.02em; flex-shrink: 0; text-decoration: none; }
 
 /* ===========================================
+   SLIDE — AGENDA
+   Simple, three numbered lines. Nothing else.
+   =========================================== */
+.slide-agenda .frame { display: flex; flex-direction: column; }
+.slide-agenda h1 { font-family: var(--font-display); font-weight: 400; font-size: 64px; color: var(--text); margin-top: 96px; max-width: 1300px; }
+.slide-agenda .fill { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.agenda-list { display: flex; flex-direction: column; gap: 36px; }
+.agenda-item { display: flex; align-items: baseline; gap: 28px; }
+.agenda-item .num { font-family: var(--font-display); font-weight: 400; font-size: 34px; color: var(--tertiary); width: 44px; flex-shrink: 0; }
+.agenda-item .label { font-family: var(--font-display); font-weight: 400; font-size: 40px; color: var(--text); }
+
+/* ===========================================
    SLIDE 1 — OVERVIEW (six agents)
    Content below the subtitle is vertically centered in the remaining
    space via the .fill flex wrapper — this is the pattern to reuse on
@@ -356,6 +369,38 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
           </div>
           <div class="line" contenteditable="false">Deployment Strategist</div>
           <div class="line" contenteditable="false">August 27, 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SLIDE — AGENDA
+         Right after the cover. Three lines, nothing more.
+    ======================================================= -->
+    <section class="slide slide-agenda">
+      <div class="frame">
+        <div class="wordmark reveal">
+          <svg class="mark" viewBox="0 0 36.95 29.27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.36,17.32 C18.36,15.89 17.58,14.56 16.32,13.86 L11.97,11.45 C10.71,10.76 9.93,9.43 9.93,7.99 L9.93,0.00 L0.00,0.00 L0.00,4.98 C0.00,6.44 0.81,7.79 2.10,8.47 L6.32,10.71 C7.62,11.40 8.43,12.74 8.43,14.21 L8.43,29.27 L18.36,29.27 L18.36,17.32 L18.36,17.32 Z" fill="currentColor"/><path d="M36.95,24.87 C36.95,23.41 36.15,22.08 34.87,21.39 L30.39,18.96 C29.12,18.27 28.32,16.94 28.32,15.48 L28.32,0.00 L18.39,0.00 L18.39,12.32 C18.39,13.77 19.19,15.11 20.46,15.80 L24.94,18.22 C26.22,18.91 27.02,20.25 27.02,21.70 L27.02,29.27 L36.95,29.27 L36.95,24.87 L36.95,24.87 Z" fill="currentColor"/></svg>
+          <span contenteditable="false">HappyRobot</span>
+        </div>
+
+        <h1 class="reveal" contenteditable="false">Today's agenda</h1>
+
+        <div class="fill">
+        <div class="agenda-list reveal">
+          <div class="agenda-item">
+            <span class="num" contenteditable="false">1</span>
+            <span class="label" contenteditable="false">What's live today</span>
+          </div>
+          <div class="agenda-item">
+            <span class="num" contenteditable="false">2</span>
+            <span class="label" contenteditable="false">What we should build next</span>
+          </div>
+          <div class="agenda-item">
+            <span class="num" contenteditable="false">3</span>
+            <span class="label" contenteditable="false">Commitments</span>
+          </div>
+        </div>
         </div>
       </div>
     </section>
