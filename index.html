@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CH Robinson Business Review</title>
+<title>CH Robinson · VP of Technology, August 2026</title>
 
 <!-- Fonts: Fraunces (display serif, stand-in for the brand's Tobias) + Hanken Grotesk (text sans, stand-in for Suisse Int'l) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -730,18 +730,18 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
           <span contenteditable="false">HappyRobot</span>
         </div>
 
-        <h1 class="reveal" contenteditable="false">What I'm proposing, and what I need from you.</h1>
+        <h1 class="reveal" contenteditable="false">Our journey ahead</h1>
 
         <div class="fill">
         <div class="proposal-row reveal">
           <div class="proposal-panel">
             <div class="tag" contenteditable="false">Proposal</div>
-            <h3 contenteditable="false">Put Release Verification into production.</h3>
+            <h3 contenteditable="false">Build Release Verification agent.</h3>
             <p contenteditable="false">Inside the 30% capacity gap already in the contract. No new cost, no new contract line.</p>
           </div>
           <div class="proposal-panel">
             <div class="tag" contenteditable="false">The ask</div>
-            <h3 contenteditable="false">Read access to some TMS fields.</h3>
+            <h3 contenteditable="false">Read access to some TMS tables.</h3>
             <p contenteditable="false">So the agent can see what it's confirming. Nothing else changes on your side.</p>
           </div>
           <div class="proposal-panel">
@@ -811,7 +811,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
    prints/exports (see @media print in viewport-base.css).
    =========================================== */
 class SlidePresentation {
-    constructor() {
+    constructor(layerStack) {
         this.slides = document.querySelectorAll('.slide');
         this.liveCount = this.slides.length - 1; // last slide = hidden appendix
         this.currentSlide = 0;
@@ -819,6 +819,8 @@ class SlidePresentation {
         this.curNum = document.getElementById('curNum');
         this.totalNum = document.getElementById('totalNum');
         this.totalNum.textContent = this.liveCount;
+        this.layerStack = layerStack;
+        this.layersIndex = Array.prototype.findIndex.call(this.slides, s => s.classList.contains('slide-layers'));
 
         this.setupStageScale();
         this.setupKeyboardNav();
@@ -843,9 +845,9 @@ class SlidePresentation {
         document.addEventListener('keydown', (e) => {
             if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
             if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-                e.preventDefault(); this.showSlide(this.currentSlide + 1, true);
+                e.preventDefault(); this.requestNav(1);
             } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-                e.preventDefault(); this.showSlide(this.currentSlide - 1, true);
+                e.preventDefault(); this.requestNav(-1);
             }
         });
     }
@@ -855,7 +857,7 @@ class SlidePresentation {
         this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
         this.stage.addEventListener('touchend', (e) => {
             const dx = e.changedTouches[0].clientX - startX;
-            if (Math.abs(dx) > 50) this.showSlide(this.currentSlide + (dx < 0 ? 1 : -1), true);
+            if (Math.abs(dx) > 50) this.requestNav(dx < 0 ? 1 : -1);
         }, { passive: true });
     }
 
@@ -865,15 +867,30 @@ class SlidePresentation {
             if (locked) return;
             if (Math.abs(e.deltaY) < 24) return;
             locked = true;
-            this.showSlide(this.currentSlide + (e.deltaY > 0 ? 1 : -1), true);
+            this.requestNav(e.deltaY > 0 ? 1 : -1);
             setTimeout(() => { locked = false; }, 700);
         }, { passive: true });
     }
 
     setupButtons() {
-        document.getElementById('prevBtn').addEventListener('click', () => this.showSlide(this.currentSlide - 1, true));
-        document.getElementById('nextBtn').addEventListener('click', () => this.showSlide(this.currentSlide + 1, true));
+        document.getElementById('prevBtn').addEventListener('click', () => this.requestNav(-1));
+        document.getElementById('nextBtn').addEventListener('click', () => this.requestNav(1));
         document.getElementById('appendixLink').addEventListener('click', () => this.showSlide(this.slides.length - 1, false));
+    }
+
+    // On the layers slide, next/prev first steps the hover-panel sequence
+    // (execution -> data -> insight) before actually changing slides, and
+    // resets/pre-seeds that panel when entering or leaving the slide.
+    requestNav(delta) {
+        if (this.layerStack && this.currentSlide === this.layersIndex) {
+            const stepped = delta > 0 ? this.layerStack.stepForward() : this.layerStack.stepBackward();
+            if (stepped) return;
+        }
+        const target = this.currentSlide + delta;
+        if (this.layerStack && target === this.layersIndex) {
+            if (delta > 0) this.layerStack.enterFromStart(); else this.layerStack.enterFromEnd();
+        }
+        this.showSlide(target, true);
     }
 
     // capLive: true = normal presenting nav, clamps below the hidden appendix slide
@@ -944,6 +961,9 @@ class InlineEditor {
    LAYER STACK — Slide 3 hover/click controller.
    Hover previews a layer's detail; click pins it open (click again,
    or click another layer, to change). Nothing pinned = empty panel.
+   The deck's next/prev arrows also step through this same sequence
+   (execution -> data -> insight) before actually changing slides —
+   see requestNav() on SlidePresentation.
    =========================================== */
 class LayerStack {
     constructor(root) {
@@ -952,6 +972,8 @@ class LayerStack {
         this.shapes = this.root.querySelectorAll('[data-layer]');
         this.panels = document.querySelectorAll('.detail-block');
         this.pinned = null;
+        this.sequence = ['execution', 'data', 'insight'];
+        this.seqIndex = -1; // -1 = nothing pinned
 
         this.shapes.forEach(shape => {
             const layer = shape.dataset.layer;
@@ -960,6 +982,7 @@ class LayerStack {
             shape.addEventListener('click', () => {
                 this.pinned = (this.pinned === layer) ? null : layer;
                 this.setActive(this.pinned);
+                this.seqIndex = this.pinned ? this.sequence.indexOf(this.pinned) : -1;
             });
         });
     }
@@ -968,11 +991,43 @@ class LayerStack {
         if (layer) { this.root.dataset.active = layer; } else { delete this.root.dataset.active; }
         this.panels.forEach(p => p.classList.toggle('active', p.dataset.panel === layer));
     }
+
+    // Returns true if it just stepped the panel forward (slide should NOT
+    // change yet); false once the sequence is exhausted (slide should
+    // advance, and the panel resets to "nothing pinned" for next time).
+    stepForward() {
+        if (this.seqIndex >= this.sequence.length - 1) {
+            this.seqIndex = -1;
+            this.pinned = null;
+            this.setActive(null);
+            return false;
+        }
+        this.seqIndex++;
+        this.pinned = this.sequence[this.seqIndex];
+        this.setActive(this.pinned);
+        return true;
+    }
+
+    // Mirror of stepForward for the prev arrow.
+    stepBackward() {
+        if (this.seqIndex <= -1) return false;
+        this.seqIndex--;
+        this.pinned = this.seqIndex === -1 ? null : this.sequence[this.seqIndex];
+        this.setActive(this.pinned);
+        return true;
+    }
+
+    enterFromStart() { this.seqIndex = -1; this.pinned = null; this.setActive(null); }
+    enterFromEnd() {
+        this.seqIndex = this.sequence.length - 1;
+        this.pinned = this.sequence[this.seqIndex];
+        this.setActive(this.pinned);
+    }
 }
 
-new SlidePresentation();
+const layerStack = new LayerStack(document.getElementById('stackWrap'));
+new SlidePresentation(layerStack);
 new InlineEditor();
-new LayerStack(document.getElementById('stackWrap'));
 </script>
 </body>
 </html>
